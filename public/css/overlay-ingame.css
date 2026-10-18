@@ -36,7 +36,14 @@
   overflow-wrap: anywhere;
   text-wrap: balance;
   color: #fff;
-  text-shadow: 1px 2px 0 #14141480;
+  -webkit-text-stroke: 1px var(--outline);
+  paint-order: stroke fill;
+  /* Solid stepped extrusion gives depth downward without moving the text. */
+  text-shadow:
+    1px 1px 0 var(--outline),
+    2px 2px 0 var(--outline),
+    3px 3px 0 var(--outline),
+    3px 4px 0 var(--outline);
 }
 
 .side b {
