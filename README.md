@@ -16,7 +16,17 @@ La contraseña nunca se incluye en el frontend. El adaptador usa Upstash Redis c
 
 En el panel `/admin`, `GUARDAR RESULTADO` conserva un marcador provisional y mantiene el enfrentamiento editable. `FINALIZAR ENFRENTAMIENTO` exige seleccionar un ganador, lo avanza a la siguiente ronda y bloquea el resultado. Para corregir un resultado confirmado, usa `EDITAR RESULTADO`; si la corrección afecta una ronda posterior ya disputada, el panel solicita confirmación e invalida los resultados dependientes antes de sincronizar el bracket público.
 
-## Render
+## Streaming y OBS
+
+Abre `/streaming` e inicia sesión con las credenciales del administrador. La vista previa y `/overlay-ingame.html` reciben los cambios por Socket.IO. Añade esta última URL como fuente de navegador en OBS (1920 × 1080); el fondo es transparente.
+
+Streaming obtiene nombres y marcadores directamente del bracket, sin crear resultados adicionales. `GUARDAR RESULTADO` con estado EN JUEGO actualiza OBS automáticamente. Con un solo enfrentamiento EN JUEGO se selecciona automáticamente; con varios, selecciona uno en Streaming y guarda. Si la selección deja de estar activa y hay varios, vuelve al estado de espera hasta elegir; sin enfrentamientos activos nunca muestra resultados anteriores. Al desconectarse oculta los datos y recupera el estado al reconectar.
+
+Los colores y el intercambio de equipos entre lados se guardan exclusivamente en Streaming. No modifican el bracket. La configuración persiste en la clave Upstash `brackets-live:streaming` o, en desarrollo, en `streaming.json` junto a `DATA_FILE`. Render conserva la misma instalación, inicio y health check; necesita Upstash para persistir después de un despliegue.
+
+Ejecuta `node --test` con Node.js 22 o superior para comprobar la selección, los datos y la independencia de Streaming.
+
+## Configuración de Render
 
 El archivo `render.yaml` deja configurado el servicio, `npm ci`, `npm start` y el health check. Puedes crear el servicio desde el repositorio y configurar estas variables:
 

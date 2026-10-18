@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Streaming · Brackets Live</title><link rel="stylesheet" href="/css/streaming.css"></head>
+<body class="control"><main><nav><a href="/admin">Administrar Brackets</a> · <a href="/">Vista pública</a></nav><h1>Streaming</h1>
+<p>Los equipos y marcadores se reciben del bracket al guardar resultados. Solo se muestran enfrentamientos EN JUEGO.</p>
+<p id="connection" role="status">Conectando…</p>
+<form id="login" hidden><h2>Iniciar sesión</h2><input name="username" placeholder="Usuario" autocomplete="username" required><input name="password" type="password" placeholder="Contraseña" autocomplete="current-password" required><button>Entrar</button></form>
+<form id="settings" hidden><label>Enfrentamiento en OBS<select id="match"></select></label><p id="selection-help"></p><label><input id="swapped" type="checkbox"> Intercambiar equipos entre lado azul y rojo</label><label>Color azul <input id="blue" type="color"></label><label>Color rojo <input id="red" type="color"></label><button>Guardar Streaming</button></form>
+<p id="message" role="status"></p><h2>Vista previa In-Game</h2><iframe title="Vista previa In-Game" src="/overlay-ingame.html"></iframe>
+<h2>Fuente de navegador en OBS</h2><p>Usa esta URL con tamaño 1920 × 1080 y fondo transparente:</p><input id="obs-url" readonly aria-label="URL para OBS"><p>Los cambios se reciben automáticamente. Si se pierde la conexión, el overlay oculta los datos hasta reconectarse.</p>
+</main><script src="/socket.io/socket.io.js"></script><script type="module" src="/js/streaming.js"></script></body></html>
