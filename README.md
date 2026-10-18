@@ -16,15 +16,6 @@ La contraseña nunca se incluye en el frontend. El adaptador usa Upstash Redis c
 
 En el panel `/admin`, `GUARDAR RESULTADO` conserva un marcador provisional y mantiene el enfrentamiento editable. `FINALIZAR ENFRENTAMIENTO` exige seleccionar un ganador, lo avanza a la siguiente ronda y bloquea el resultado. Para corregir un resultado confirmado, usa `EDITAR RESULTADO`; si la corrección afecta una ronda posterior ya disputada, el panel solicita confirmación e invalida los resultados dependientes antes de sincronizar el bracket público.
 
-## Streaming / Overlays
-
-El panel `/admin` incluye el control `STREAMING / OVERLAYS`. El operador puede seleccionar un enfrentamiento, editar el draft y controlar el marcador in-game. Las URLs públicas para OBS son:
-
-- `/overlay/draft`
-- `/overlay/ingame`
-
-El bloque `streaming` se guarda dentro del torneo persistido. El enfrentamiento y los logos se derivan automáticamente del bracket; picks, bans, textos y scores manuales se conservan al cambiar de enfrentamiento hasta que el operador use uno de los botones de reinicio. Ambos overlays reciben las actualizaciones mediante el mismo evento Socket.IO del sistema.
-
 ## Render
 
 El archivo `render.yaml` deja configurado el servicio, `npm ci`, `npm start` y el health check. Puedes crear el servicio desde el repositorio y configurar estas variables:

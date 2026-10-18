@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import cookieSession from "cookie-session";
 import rateLimit from "express-rate-limit";
 import { Server } from "socket.io";
-import { createTournament, getBrawlers, getStreamingView, seedDemo, updateMatch, updateStreaming } from "./bracket-engine.js";
+import { createTournament, seedDemo, updateMatch } from "./bracket-engine.js";
 import { getTournament, loadTournament, saveTournament } from "./storage.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -42,8 +42,6 @@ const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHe
 const adminOnly = (req, res, next) => req.session.admin ? next() : res.status(401).json({ error: "No autorizado" });
 
 app.get("/api/tournament", (req, res) => res.json(getTournament()));
-app.get("/api/streaming", (req, res) => res.json(getStreamingView(getTournament())));
-app.get("/api/brawlers", (req, res) => res.json(getBrawlers()));
 app.get("/health", (req, res) => res.json({ ok: true, version: getTournament()?.version ?? null }));
 app.post("/api/login", loginLimiter, (req, res) => {
   if (req.body.username !== (process.env.ADMIN_USER || "admin") || req.body.password !== (process.env.ADMIN_PASSWORD || "change-this-password")) {
@@ -75,20 +73,11 @@ app.patch("/api/matches/:id", adminOnly, async (req, res) => {
     res.json(tournament);
   } catch (error) { res.status(400).json({ error: error.message }); }
 });
-app.patch("/api/streaming", adminOnly, async (req, res) => {
-  try {
-    const tournament = await saveTournament(updateStreaming(getTournament(), req.body));
-    io.emit("tournament:update", tournament);
-    res.json(getStreamingView(tournament));
-  } catch (error) { res.status(400).json({ error: error.message }); }
-});
 app.get("/api/export", adminOnly, (req, res) => {
   res.setHeader("Content-Disposition", "attachment; filename=tournament.json");
   res.json(getTournament());
 });
 app.get("/admin", (req, res) => res.sendFile(path.join(__dirname, "..", "public", "admin.html")));
-app.get("/overlay/draft", (req, res) => res.sendFile(path.join(__dirname, "..", "public", "overlay-draft.html")));
-app.get("/overlay/ingame", (req, res) => res.sendFile(path.join(__dirname, "..", "public", "overlay-ingame.html")));
 io.on("connection", (socket) => socket.emit("tournament:update", getTournament()));
 
 await loadTournament();
