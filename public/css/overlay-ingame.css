@@ -1,0 +1,91 @@
+/* Broadcast artwork only. The control panel keeps its existing styles. */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=IBM+Plex+Mono:wght@600;700&display=swap');
+
+#scoreboard {
+  --outline: #141414;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: clamp(100px, 22vw, 460px);
+  width: 94%;
+  max-width: 1760px;
+  margin: 24px auto;
+  align-items: stretch;
+  filter: none;
+}
+
+.side {
+  display: flex;
+  gap: 0;
+  padding: 0;
+  border: 3px solid var(--outline);
+  border-radius: 0;
+  background: var(--side-color);
+  box-shadow: 5px 5px 0 var(--outline);
+  font-family: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+  font-size: clamp(16px, 2.2vw, 42px);
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.side span {
+  flex: 1;
+  min-width: 0;
+  padding: clamp(10px, 1vw, 18px) clamp(10px, 1.15vw, 22px);
+  text-align: center;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  color: #fff;
+  text-shadow: 1px 2px 0 #14141480;
+}
+
+.side b {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  flex: 0 0 auto;
+  min-width: clamp(44px, 4.6vw, 88px);
+  padding: 8px 10px;
+  background: #fff;
+  color: #141414;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(24px, 2.6vw, 50px);
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.blue b { border-left: 3px solid var(--outline); }
+.red b { border-right: 3px solid var(--outline); }
+
+/* Only the text highlight moves; glyphs and blocks remain stationary. */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .side span {
+    background-image: linear-gradient(110deg, #ffffffe0 40%, #fff 50%, #ffffffe0 60%);
+    background-size: 250% 100%;
+    background-position: 180% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: team-name-sheen 14s ease-in-out infinite;
+  }
+}
+
+@keyframes team-name-sheen {
+  0%, 75% { background-position: 180% 0; }
+  100% { background-position: -80% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .side span { animation: none; }
+}
+
+#waiting {
+  margin: 24px 3%;
+  max-width: 30%;
+  border: 3px solid #141414;
+  border-radius: 0;
+  box-shadow: 4px 4px 0 #141414;
+  font-family: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+}
