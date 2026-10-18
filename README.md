@@ -12,6 +12,10 @@ MVP de un sistema de brackets de esports en tiempo real, construido con HTML, CS
 
 La contraseña nunca se incluye en el frontend. El adaptador usa Upstash Redis cuando `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` están definidos; si no, usa `DATA_FILE` para desarrollo local.
 
+## Flujo de resultados
+
+En el panel `/admin`, `GUARDAR RESULTADO` conserva un marcador provisional y mantiene el enfrentamiento editable. `FINALIZAR ENFRENTAMIENTO` exige seleccionar un ganador, lo avanza a la siguiente ronda y bloquea el resultado. Para corregir un resultado confirmado, usa `EDITAR RESULTADO`; si la corrección afecta una ronda posterior ya disputada, el panel solicita confirmación e invalida los resultados dependientes antes de sincronizar el bracket público.
+
 ## Render
 
 El archivo `render.yaml` deja configurado el servicio, `npm ci`, `npm start` y el health check. Puedes crear el servicio desde el repositorio y configurar estas variables:

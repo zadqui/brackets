@@ -10,15 +10,21 @@ function render(tournament) {
   const logo = $("#logo");
   logo.classList.toggle("hidden", !tournament.logoUrl);
   if (tournament.logoUrl) { logo.src = tournament.logoUrl; logo.alt = tournament.name; }
-  $("#bracket").innerHTML = tournament.rounds.map((matches, index) => `<section class="round" data-round="${index + 1}"><h2 class="round-title">${index === tournament.rounds.length - 1 ? "GRAN FINAL" : index === tournament.rounds.length - 2 ? "SEMIFINALES" : index === 0 ? "CUARTOS DE FINAL" : "Ronda " + (index + 1)}</h2><div class="round-matches">${matches.map(matchTemplate).join("")}</div></section>`).join("");
+  $("#bracket").innerHTML = tournament.rounds.map((matches, index) => `<section class="round" data-round="${index + 1}"><h2 class="round-title">${roundTitle(index + 1, tournament)}</h2><div class="round-matches">${matches.map((match) => matchTemplate(match, tournament)).join("")}</div></section>`).join("");
   const final = tournament.rounds.at(-1)[0];
   $("#champion").classList.toggle("hidden", !final?.winnerId);
   if (final?.winnerId) $("#champion").innerHTML = `<p class="kicker">THE LAST TEAM STANDING</p><h2>CAMPEÓN</h2><p>${teamName(final, final.winnerId)}</p>`;
 }
+function roundTitle(round, tournament) {
+  if (round === tournament.rounds.length) return "GRAN FINAL";
+  const names = ["", "DIECISEISAVOS DE FINAL", "OCTAVOS DE FINAL", "CUARTOS DE FINAL", "SEMIFINALES", "GRAN FINAL"];
+  return names[5 - Math.log2(tournament.rounds[0].length * 2) + round] || `RONDA ${round}`;
+}
 function teamName(match, id) { return match.teamA?.id === id ? match.teamA.name : match.teamB?.name || "POR DEFINIR"; }
-function matchTemplate(match) {
+function matchTemplate(match, tournament) {
   const row = (team, score, id) => `<div class="team ${match.winnerId === id ? "winner" : match.state === "FINISHED" && id ? "eliminated" : ""}"><span>${team?.name || "POR DEFINIR"}</span><b class="score">${team ? score : "—"}</b></div>`;
-  return `<article class="match ${match.state.toLowerCase()}"><div class="match-label"><span>${match.id.toUpperCase()}</span><span>${labels[match.state]}</span></div>${row(match.teamA, match.scoreA, match.teamA?.id)}${row(match.teamB, match.scoreB, match.teamB?.id)}<div class="state">${match.state === "FINISHED" ? "RESULTADO CONFIRMADO" : match.state === "LIVE" ? "PARTIDA EN CURSO" : "ESPERANDO ENFRENTAMIENTO"}</div></article>`;
+  const name = match.round === tournament.rounds.length ? "GRAN FINAL" : `${roundTitle(match.round, tournament).replace("SEMIFINALES", "SEMIFINAL")} ${match.round === 1 ? match.position / 2 + 1 : match.position + 1}`;
+  return `<article class="match ${match.state.toLowerCase()}"><div class="match-label"><span>${name}</span><span>${labels[match.state]}</span></div>${row(match.teamA, match.scoreA, match.teamA?.id)}${row(match.teamB, match.scoreB, match.teamB?.id)}<div class="state">${match.state === "FINISHED" ? "RESULTADO CONFIRMADO" : match.state === "LIVE" ? "PARTIDA EN CURSO" : "ESPERANDO ENFRENTAMIENTO"}</div></article>`;
 }
 socket.on("connect", () => { $("#connection").textContent = "● CONECTADO"; $("#connection").classList.add("online"); });
 socket.on("disconnect", () => { $("#connection").textContent = "● SIN CONEXIÓN"; $("#connection").classList.remove("online"); });
