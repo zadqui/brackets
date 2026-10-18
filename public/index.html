@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Brackets Live</title><link rel="stylesheet" href="/css/styles.css"></head>
+<body>
+  <main class="paper">
+    <header class="masthead"><div><img id="logo" class="tournament-logo hidden" alt=""><p class="kicker">LIVE TOURNAMENT SYSTEM</p><h1 id="title">BRACKETS LIVE</h1><p id="category">Temporada 2026</p></div><div class="header-actions"><span id="connection" class="connection">● CONECTANDO</span><button id="fullscreen" class="button dark">PANTALLA COMPLETA</button></div></header>
+    <section class="hero-strip"><span id="status">EN VIVO</span><span id="updated">ACTUALIZACIÓN EN TIEMPO REAL</span><strong id="tagline">EL CAMINO AL TÍTULO</strong></section>
+    <section id="bracket" class="bracket" aria-live="polite"></section>
+    <section id="champion" class="champion hidden"></section>
+  </main>
+  <script src="/socket.io/socket.io.js"></script><script type="module" src="/js/public.js"></script>
+</body>
+</html>
