@@ -4,7 +4,22 @@
 <p>Los equipos y marcadores se reciben del bracket al guardar resultados. Solo se muestran enfrentamientos EN JUEGO.</p>
 <p id="connection" role="status">Conectando…</p>
 <form id="login" hidden><h2>Iniciar sesión</h2><input name="username" placeholder="Usuario" autocomplete="username" required><input name="password" type="password" placeholder="Contraseña" autocomplete="current-password" required><button>Entrar</button></form>
-<form id="settings" hidden><label>Enfrentamiento en OBS<select id="match"></select></label><p id="selection-help"></p><label><input id="swapped" type="checkbox"> Intercambiar equipos entre lado azul y rojo</label><label>Color azul <input id="blue" type="color"></label><label>Color rojo <input id="red" type="color"></label><button>Guardar Streaming</button></form>
-<p id="message" role="status"></p><h2>Vista previa In-Game</h2><iframe title="Vista previa In-Game" src="/overlay-ingame.html"></iframe>
+<form id="settings" hidden><label>Enfrentamiento en OBS<select id="match"></select></label><p id="selection-help"></p><label><input id="swapped" type="checkbox"> Intercambiar equipos entre lado azul y rojo</label><button>Guardar Streaming</button>
+<fieldset class="overlay-customization"><legend>Personalización del overlay</legend>
+<p>Vista previa inmediata. Los cambios de diseño se guardan automáticamente y se envían a OBS. Medidas referidas a 1920 px; los nombres largos se ajustan para caber.</p>
+<div class="design-grid">
+<label>Tamaño de nombres (px)<input data-design="nameSize" type="number" min="24" max="80" step="1"></label>
+<label>Tipografía<select data-design="fontFamily"><option value="arial">Arial Black · gruesa y clara</option><option value="barlow">Barlow Condensed · estilo Brackets</option><option value="impact">Impact · titular</option></select></label>
+<label>Bloque azul<input id="blue" data-design="blueColor" type="color"></label>
+<label>Bloque rojo<input id="red" data-design="redColor" type="color"></label>
+<label>Color del texto<input data-design="textColor" type="color"></label>
+<label>Contorno del texto (px)<input data-design="textStroke" type="number" min="0" max="2" step="0.1"></label>
+<label>Sombra dura: desplazamiento (px)<input data-design="shadowOffset" type="number" min="0" max="5" step="0.5"></label>
+<label>Anchura máxima de cada bloque (px)<input data-design="blockWidth" type="number" min="400" max="800" step="10"></label>
+<label>Separación central (px)<input data-design="centerGap" type="number" min="220" max="640" step="10"></label>
+<label><input data-design="shimmer" type="checkbox"> Brillo sutil del texto</label>
+</div><button id="reset-design" type="button">Restablecer diseño predeterminado</button><p id="design-status" role="status"></p>
+</fieldset></form>
+<p id="message" role="status"></p><h2>Vista previa In-Game</h2><iframe id="overlay-preview" title="Vista previa In-Game" src="/overlay-ingame.html?preview=1"></iframe>
 <h2>Fuente de navegador en OBS</h2><p>Usa esta URL con tamaño 1920 × 1080 y fondo transparente:</p><input id="obs-url" readonly aria-label="URL para OBS"><p>Los cambios se reciben automáticamente. Si se pierde la conexión, el overlay oculta los datos hasta reconectarse.</p>
 </main><script src="/socket.io/socket.io.js"></script><script type="module" src="/js/streaming.js"></script></body></html>

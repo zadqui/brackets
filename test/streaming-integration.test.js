@@ -60,7 +60,11 @@ test("HTTP, Socket.IO, permisos y persistencia con el servidor real", { timeout:
     await patch("/api/matches/r1-m3", { state: "LIVE", scoreA: 1, scoreB: 3 });
     await waitView((view) => view.liveMatches.length === 2 && !view.match);
     const before = await (await request("/api/tournament")).json();
-    await patch("/api/streaming", { selectedMatchId: "r1-m3", swapped: true, blueColor: "#123456" });
+    await patch("/api/streaming", { selectedMatchId: "r1-m3", swapped: true, blueColor: "#123456", fontFamily: "impact", textColor: "#ffd600", textStroke: 0.5, shadowOffset: 1, blockWidth: 700, shimmer: false });
+    await Promise.all([
+      patch("/api/streaming", { nameSize: 60 }),
+      patch("/api/streaming", { centerGap: 480 })
+    ]);
     await waitView((view) => view.match?.id === "r1-m3" && view.settings.swapped);
     assert.deepEqual(await (await request("/api/tournament")).json(), before);
     await patch("/api/matches/r1-m3", { state: "READY" });
@@ -72,6 +76,14 @@ test("HTTP, Socket.IO, permisos y persistencia con el servidor real", { timeout:
     const persisted = await (await request("/api/streaming")).json();
     assert.equal(persisted.settings.blueColor, "#123456");
     assert.equal(persisted.settings.swapped, true);
+    assert.equal(persisted.settings.nameSize, 60);
+    assert.equal(persisted.settings.fontFamily, "impact");
+    assert.equal(persisted.settings.textColor, "#ffd600");
+    assert.equal(persisted.settings.textStroke, 0.5);
+    assert.equal(persisted.settings.shadowOffset, 1);
+    assert.equal(persisted.settings.blockWidth, 700);
+    assert.equal(persisted.settings.centerGap, 480);
+    assert.equal(persisted.settings.shimmer, false);
     assert.equal(persisted.match, null);
     await stop();
     await start(true);

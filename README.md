@@ -26,6 +26,14 @@ Los colores y el intercambio de equipos entre lados se guardan exclusivamente en
 
 Ejecuta `node --test` con Node.js 22 o superior para comprobar la selección, los datos y la independencia de Streaming.
 
+### Personalización del overlay
+
+En `/streaming`, **Personalización del overlay** permite ajustar tamaño y tipografía de los nombres (Arial Black, Barlow Condensed o Impact), colores de bloques y texto, contorno, desplazamiento de sombra sólida, anchura máxima de bloques, separación central y brillo. La vista previa cambia inmediatamente; el diseño se guarda automáticamente y se transmite a OBS. **Restablecer diseño predeterminado** restaura únicamente el diseño, sin cambiar el enfrentamiento elegido ni el intercambio de lados.
+
+El diseño predeterminado utiliza nombres blancos de 48 px en un lienzo de 1920 px, contorno de 0.6 px y sombra negra sólida de 2 px. Los nombres largos reducen su tamaño y, cuando hace falta, usan dos líneas equilibradas. El brillo se dibuja en una capa independiente para mantener opaco y legible el texto. El diseño escala con la anchura de la fuente de navegador.
+
+Para repetir la revisión en Chrome instalado, ejecuta `npm install --prefix .tmp/visual-tools --no-save --package-lock=false playwright` y luego `node scripts/check-overlay-browser.cjs`. Usa un servidor y datos de prueba independientes; comprueba los controles, vista previa inmediata, persistencia al recargar, OBS, restablecimiento y nombres largos/cortos. Guarda las capturas en `.tmp/visual-check/`, excluida de Git.
+
 ## Configuración de Render
 
 El archivo `render.yaml` deja configurado el servicio, `npm ci`, `npm start` y el health check. Puedes crear el servicio desde el repositorio y configurar estas variables:

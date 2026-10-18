@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { seedDemo, updateMatch } from "../server/bracket-engine.js";
 import { defaultSettings, streamingView, validateSettings } from "../server/streaming.js";
+import { defaultDesign, designRanges } from "../public/js/overlay-design.js";
 
 test("espera sin LIVE y lee los resultados guardados sin duplicarlos", () => {
   const tournament = seedDemo();
@@ -40,4 +41,14 @@ test("finalizar conserva avance existente y retira el encuentro del overlay", ()
 test("configuración no admite nombres ni resultados duplicados", () => {
   for (const patch of [{ scoreA: 3 }, { teamA: "Otro" }, { blueColor: "red" }, { swapped: "false" }, null]) assert.throws(() => validateSettings(patch));
   assert.deepEqual(validateSettings({ swapped: true, redColor: "#123abc" }), { swapped: true, redColor: "#123abc" });
+});
+
+test("diseño predeterminado válido y límites de personalización seguros", () => {
+  assert.deepEqual(validateSettings({ ...defaultDesign }), defaultDesign);
+  for (const [key, [min, max]] of Object.entries(designRanges)) {
+    for (const value of [min - 1, max + 1, "40", null, NaN, Infinity]) assert.throws(() => validateSettings({ [key]: value }));
+    assert.doesNotThrow(() => validateSettings({ [key]: min }));
+    assert.doesNotThrow(() => validateSettings({ [key]: max }));
+  }
+  for (const patch of [{ fontFamily: "url(evil)" }, { fontFamily: "__proto__" }, { textColor: "white" }, { shimmer: 1 }]) assert.throws(() => validateSettings(patch));
 });

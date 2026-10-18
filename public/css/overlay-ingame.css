@@ -1,58 +1,73 @@
-/* Broadcast artwork only. The control panel keeps its existing styles. */
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=IBM+Plex+Mono:wght@600;700&display=swap');
-
+/* In-Game artwork; measurements scale from the 1920px OBS canvas. */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800&family=IBM+Plex+Mono:wght@700&display=swap');
 #scoreboard {
   --outline: #141414;
+  --unit: calc(100vw / 1920);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  column-gap: clamp(100px, 22vw, 460px);
-  width: 94%;
-  max-width: 1760px;
+  column-gap: calc(var(--centerGap, 420) * var(--unit));
+  width: min(94vw, calc((var(--blockWidth, 650) * 2 + var(--centerGap, 420)) * var(--unit)));
+  max-width: none;
   margin: 24px auto;
   align-items: stretch;
   filter: none;
 }
-
 .side {
   display: flex;
   gap: 0;
   padding: 0;
-  border: 3px solid var(--outline);
+  min-height: clamp(52px, 5vw, 96px);
+  border: clamp(2px, .16vw, 3px) solid var(--outline);
   border-radius: 0;
   background: var(--side-color);
-  box-shadow: 5px 5px 0 var(--outline);
-  font-family: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
-  font-size: clamp(16px, 2.2vw, 42px);
-  font-weight: 800;
-  line-height: 1.05;
+  box-shadow: 4px 4px 0 var(--outline);
+  font-family: var(--name-font, 'Arial Black', Arial, sans-serif);
+  font-weight: 900;
+  line-height: 1.1;
 }
-
 .side span {
+  position: relative;
+  display: grid;
+  place-items: center;
   flex: 1;
   min-width: 0;
-  padding: clamp(10px, 1vw, 18px) clamp(10px, 1.15vw, 22px);
+  padding: 10px clamp(8px, .8vw, 16px);
   text-align: center;
   text-transform: uppercase;
-  overflow-wrap: anywhere;
-  text-wrap: balance;
-  color: #fff;
-  -webkit-text-stroke: 1px var(--outline);
+  white-space: pre-line;
+  font-size: calc(var(--nameSize, 48) * var(--unit));
+  color: var(--name-color, #fff);
+  -webkit-text-stroke: var(--fitted-stroke, .6px) var(--outline);
   paint-order: stroke fill;
-  /* Solid stepped extrusion gives depth downward without moving the text. */
-  text-shadow:
-    1px 1px 0 var(--outline),
-    2px 2px 0 var(--outline),
-    3px 3px 0 var(--outline),
-    3px 4px 0 var(--outline);
+  text-shadow: var(--fitted-shadow, 2px) var(--fitted-shadow, 2px) 0 #000;
 }
-
+/* The real letters retain an opaque fill; the highlight has no shadow.
+   Transparent gradient text with a hard shadow used to black out names. */
+.has-shimmer .side span::after {
+  content: attr(data-name);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: inherit;
+  color: transparent;
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+  pointer-events: none;
+  background-image: linear-gradient(110deg, transparent 42%, #ffffff38 50%, transparent 58%);
+  background-size: 300% 100%;
+  background-position: 180% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: team-name-sheen 14s ease-in-out infinite;
+}
 .side b {
   display: flex;
   align-items: center;
   justify-content: center;
   align-self: stretch;
   flex: 0 0 auto;
-  min-width: clamp(44px, 4.6vw, 88px);
+  min-width: clamp(36px, 4.6vw, 88px);
   padding: 8px 10px;
   background: #fff;
   color: #141414;
@@ -62,37 +77,20 @@
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
-
 .blue b { border-left: 3px solid var(--outline); }
 .red b { border-right: 3px solid var(--outline); }
-
-/* Only the text highlight moves; glyphs and blocks remain stationary. */
-@supports (background-clip: text) or (-webkit-background-clip: text) {
-  .side span {
-    background-image: linear-gradient(110deg, #ffffffe0 40%, #fff 50%, #ffffffe0 60%);
-    background-size: 250% 100%;
-    background-position: 180% 0;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: team-name-sheen 14s ease-in-out infinite;
-  }
-}
-
 @keyframes team-name-sheen {
   0%, 75% { background-position: 180% 0; }
   100% { background-position: -80% 0; }
 }
-
 @media (prefers-reduced-motion: reduce) {
-  .side span { animation: none; }
+  .has-shimmer .side span::after { animation: none; background: none; }
 }
-
 #waiting {
   margin: 24px 3%;
   max-width: 30%;
   border: 3px solid #141414;
   border-radius: 0;
   box-shadow: 4px 4px 0 #141414;
-  font-family: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+  font-family: Arial, sans-serif;
 }

@@ -8,6 +8,7 @@ const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
 const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
 let memory;
 let streamingSettings = { ...defaultSettings };
+let streamingWrites = Promise.resolve();
 const streamingFile = path.join(path.dirname(file), "streaming.json");
 
 export async function loadStreaming() {
@@ -22,15 +23,20 @@ export async function loadStreaming() {
 
 export function getStreaming() { return streamingSettings; }
 
-export async function saveStreaming(patch) {
-  const next = { ...streamingSettings, ...patch };
-  if (redisUrl && redisToken) await redisCommand(["set", "brackets-live:streaming", JSON.stringify(next)]);
-  else {
-    await fs.mkdir(path.dirname(streamingFile), { recursive: true });
-    await fs.writeFile(streamingFile, JSON.stringify(next, null, 2), "utf8");
-  }
-  streamingSettings = next;
-  return next;
+export function saveStreaming(patch) {
+  // Autosave requests may overlap; merge each patch after the previous write.
+  const operation = streamingWrites.then(async () => {
+    const next = { ...streamingSettings, ...patch };
+    if (redisUrl && redisToken) await redisCommand(["set", "brackets-live:streaming", JSON.stringify(next)]);
+    else {
+      await fs.mkdir(path.dirname(streamingFile), { recursive: true });
+      await fs.writeFile(streamingFile, JSON.stringify(next, null, 2), "utf8");
+    }
+    streamingSettings = next;
+    return next;
+  });
+  streamingWrites = operation.catch(() => {});
+  return operation;
 }
 
 async function redisCommand(command) {
