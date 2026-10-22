@@ -1,5 +1,30 @@
 let tournament;
 const $ = (selector) => document.querySelector(selector);
+const wolfcaveConfig = {
+  name: "Copa Wolf Cave",
+  category: "Jornada Académica 2026 · Torneo Brawl Stars",
+  tagline: "Aullando hacia la victoria",
+  logoUrl: "",
+  status: "UPCOMING",
+  participants: [
+    "NEXUZ",
+    "El trio mounstruoso",
+    "Team ONYX",
+    "Sobrevalorados",
+    "NullPointer",
+    "Hijos de Chombo",
+    "DytysFloyd",
+    "Chicken House",
+    "Equipo mobile",
+    "Oozma Kappa",
+    "Tung Bros",
+    "Los Tuncintitos Gaming",
+    "Santos",
+    "Los tres mosqueteros",
+    "CODEX",
+    "Cibercianos vs Aegis vs Cibermanos"
+  ].map((name, index) => ({ id: `team-${index + 1}`, name, seed: index + 1 }))
+};
 async function api(url, options = {}) {
   const response = await fetch(url, { headers: { "Content-Type": "application/json" }, ...options });
   const data = await response.json();
@@ -88,6 +113,12 @@ async function editMatch(id) {
 $("#login-form").addEventListener("submit", async (event) => { event.preventDefault(); const form = new FormData(event.currentTarget); try { await api("/api/login", { method: "POST", body: JSON.stringify(Object.fromEntries(form)) }); showControl(await api("/api/tournament")); } catch (error) { $("#login-error").textContent = error.message; } });
 $("#tournament-form").addEventListener("submit", async (event) => { event.preventDefault(); if (!confirm("¿Guardar la configuración? Esto reiniciará los enfrentamientos del bracket.")) return; const participants = [...document.querySelectorAll("[data-team-index]")].map((input, index) => ({ id: `team-${index + 1}`, name: input.value.trim(), seed: index + 1 })); try { showControl(await api("/api/tournament", { method: "PUT", body: JSON.stringify({ name: $("#tournament-name").value.trim(), category: $("#tournament-category").value.trim(), tagline: $("#tournament-tagline").value.trim(), logoUrl: $("#tournament-logo").value.trim(), status: $("#tournament-status").value, participants }) })); $("#settings-error").textContent = "Configuración guardada."; } catch (error) { $("#settings-error").textContent = error.message; } });
 $("#team-count").addEventListener("change", renderTeamFields);
+$("#wolfcave").addEventListener("click", () => {
+  tournament = { ...tournament, ...wolfcaveConfig, participants: wolfcaveConfig.participants.map((team) => ({ ...team })) };
+  fillSettings();
+  $("#settings-error").textContent = "Configuración Copa Wolfcave cargada. Presiona «Guardar configuración» para aplicarla.";
+  $("#tournament-form").scrollIntoView({ behavior: "smooth", block: "start" });
+});
 $("#demo").addEventListener("click", async () => { if (confirm("¿Cargar el torneo demo y reemplazar el estado actual?")) showControl(await api("/api/tournament/demo", { method: "POST" })); });
 $("#logout").addEventListener("click", async () => { await api("/api/logout", { method: "POST" }); location.reload(); });
 boot();
